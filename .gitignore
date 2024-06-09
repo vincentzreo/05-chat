@@ -1,4 +1,5 @@
 /target
-test.rest
-app.yml
+*/target
+/chat_server/app.yml
+/chat_server/test.rest
 thinks.excalidraw
