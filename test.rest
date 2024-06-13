@@ -1,0 +1,28 @@
+### signup user
+
+POST http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+    "fullname": "zhouzhangqi",
+    "email": "zhouzhangqi@163.com",
+    "password": "123456"
+}
+
+### signin user(valid)
+POST http://localhost:6688/api/signin
+Content-Type: application/json
+
+{
+    "email": "zhouzhangqi@163.com",
+    "password": "123456"
+}
+
+### signin user(invalid)
+POST http://localhost:6688/api/signin
+Content-Type: application/json
+
+{
+    "email": "zzq@163.com",
+    "password": "123456"
+}

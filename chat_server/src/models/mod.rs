@@ -4,7 +4,9 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
+pub use user::{CreateUser, SigninUser};
+
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone, PartialEq)]
 pub struct User {
     pub id: i64,
     pub fullname: String,
