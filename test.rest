@@ -4,8 +4,9 @@ POST http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
-    "fullname": "zhouzhangqi",
-    "email": "zhouzhangqi@163.com",
+    "workspace": "acme",
+    "fullname": "zzq",
+    "email": "zzq@163.com",
     "password": "123456"
 }
 
@@ -27,6 +28,11 @@ Content-Type: application/json
 
 ### get chat list
 GET http://localhost:6688/api/chat
+Authorization: Bearer {{token}}
+
+
+### get user list
+GET http://localhost:6688/api/users
 Authorization: Bearer {{token}}
 
 

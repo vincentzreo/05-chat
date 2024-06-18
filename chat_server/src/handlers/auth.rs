@@ -55,7 +55,7 @@ mod tests {
     async fn signup_duplicate_should_409() -> anyhow::Result<()> {
         let config = AppConfig::load()?;
         let (_tdb, state) = AppState::new_for_test(config).await?;
-        let input = CreateUser::new("zzq", "zzq@zzq.com", "zzq");
+        let input = CreateUser::new("none", "zzq", "zzq@zzq.com", "zzq");
         signup_handler(State(state.clone()), Json(input.clone()))
             .await?
             .into_response();
@@ -73,7 +73,7 @@ mod tests {
     async fn signup_should_work() -> anyhow::Result<()> {
         let config = AppConfig::load()?;
         let (_tdb, state) = AppState::new_for_test(config).await?;
-        let input = CreateUser::new("zzq", "zzq@zzq.com", "zzq");
+        let input = CreateUser::new("none", "zzq", "zzq@zzq.com", "zzq");
         let ret = signup_handler(State(state), Json(input))
             .await?
             .into_response();
@@ -90,7 +90,7 @@ mod tests {
     async fn signin_should_work() -> anyhow::Result<()> {
         let config = AppConfig::load()?;
         let (_tdb, state) = AppState::new_for_test(config).await?;
-        let user = CreateUser::new("zzq", "zzq@zzq.com", "zzq");
+        let user = CreateUser::new("none", "zzq", "zzq@zzq.com", "zzq");
         User::create(&user, &state.pool).await?;
         let input = SigninUser::new("zzq@zzq.com", "zzq");
 
