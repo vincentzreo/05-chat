@@ -91,7 +91,8 @@ impl AppState {
     ) -> Result<(sqlx_db_tester::TestPg, Self), AppError> {
         let dk = DecodingKey::load(&config.auth.pk).context("load pd failed")?;
         let ek = EncodingKey::load(&config.auth.sk).context("load sk failed")?;
-        let server_url = config.server.db_url.split('/').next().unwrap();
+        let post = config.server.db_url.rfind('/').unwrap();
+        let server_url = &config.server.db_url[..post];
         let tdb = sqlx_db_tester::TestPg::new(
             server_url.to_string(),
             std::path::Path::new("../migrations"),
