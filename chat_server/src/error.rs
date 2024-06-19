@@ -15,6 +15,10 @@ pub struct ErrorOutput {
 pub enum AppError {
     #[error("email already exists: {0}")]
     EmailAlreadyExists(String),
+    #[error("create chat error: {0}")]
+    CreateChatError(String),
+    #[error("Not found: {0}")]
+    NotFound(String),
     #[error("sql error: {0}")]
     SqlxError(#[from] sqlx::Error),
     #[error("password hash error: {0}")]
@@ -41,6 +45,8 @@ impl IntoResponse for AppError {
             AppError::JwtError(_) => StatusCode::FORBIDDEN,
             AppError::HttpHeaderError(_) => StatusCode::UNPROCESSABLE_ENTITY,
             AppError::EmailAlreadyExists(_) => StatusCode::CONFLICT,
+            AppError::CreateChatError(_) => StatusCode::BAD_REQUEST,
+            AppError::NotFound(_) => StatusCode::NOT_FOUND,
         };
 
         (status, Json(json!(ErrorOutput::new(self.to_string())))).into_response()
