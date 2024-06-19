@@ -55,7 +55,7 @@ mod tests {
     async fn signup_duplicate_should_409() -> anyhow::Result<()> {
         let config = AppConfig::load()?;
         let (_tdb, state) = AppState::new_for_test(config).await?;
-        let input = CreateUser::new("none", "zzq", "zzq@zzq.com", "zzq");
+        let input = CreateUser::new("none", "zzq21", "zzq21@zzq.com", "zzq");
         signup_handler(State(state.clone()), Json(input.clone()))
             .await?
             .into_response();
@@ -65,7 +65,7 @@ mod tests {
         assert_eq!(ret.status(), StatusCode::CONFLICT);
         let body = ret.into_body().collect().await?.to_bytes();
         let ret: ErrorOutput = serde_json::from_slice(&body)?;
-        assert_eq!(ret.error, "email already exists: zzq@zzq.com");
+        assert_eq!(ret.error, "email already exists: zzq21@zzq.com");
         Ok(())
     }
 
@@ -73,7 +73,7 @@ mod tests {
     async fn signup_should_work() -> anyhow::Result<()> {
         let config = AppConfig::load()?;
         let (_tdb, state) = AppState::new_for_test(config).await?;
-        let input = CreateUser::new("none", "zzq", "zzq@zzq.com", "zzq");
+        let input = CreateUser::new("none", "zzq21", "zzq21@zzq.com", "zzq");
         let ret = signup_handler(State(state), Json(input))
             .await?
             .into_response();
@@ -90,9 +90,9 @@ mod tests {
     async fn signin_should_work() -> anyhow::Result<()> {
         let config = AppConfig::load()?;
         let (_tdb, state) = AppState::new_for_test(config).await?;
-        let user = CreateUser::new("none", "zzq", "zzq@zzq.com", "zzq");
+        let user = CreateUser::new("none", "zzq21", "zzq21@zzq.com", "zzq");
         User::create(&user, &state.pool).await?;
-        let input = SigninUser::new("zzq@zzq.com", "zzq");
+        let input = SigninUser::new("zzq21@zzq.com", "zzq");
 
         let ret = signin_handler(State(state), Json(input))
             .await?
@@ -109,7 +109,7 @@ mod tests {
         let config = AppConfig::load()?;
         let (_tdb, state) = AppState::new_for_test(config).await?;
 
-        let input = SigninUser::new("zzq@zzq.com", "zzq");
+        let input = SigninUser::new("zzq21@zzq.com", "zzq");
 
         let ret = signin_handler(State(state), Json(input))
             .await?
