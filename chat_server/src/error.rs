@@ -19,6 +19,8 @@ pub enum AppError {
     CreateChatError(String),
     #[error("Not found: {0}")]
     NotFound(String),
+    #[error("io error: {0}")]
+    IoError(#[from] std::io::Error),
     #[error("sql error: {0}")]
     SqlxError(#[from] sqlx::Error),
     #[error("password hash error: {0}")]
@@ -47,6 +49,7 @@ impl IntoResponse for AppError {
             AppError::EmailAlreadyExists(_) => StatusCode::CONFLICT,
             AppError::CreateChatError(_) => StatusCode::BAD_REQUEST,
             AppError::NotFound(_) => StatusCode::NOT_FOUND,
+            AppError::IoError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         (status, Json(json!(ErrorOutput::new(self.to_string())))).into_response()
