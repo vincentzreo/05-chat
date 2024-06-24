@@ -107,7 +107,8 @@ mod test_util {
 
     use super::*;
     impl AppState {
-        pub async fn new_for_test(config: AppConfig) -> Result<(TestPg, Self), AppError> {
+        pub async fn new_for_test() -> Result<(TestPg, Self), AppError> {
+            let config = AppConfig::load()?;
             let dk = DecodingKey::load(&config.auth.pk).context("load pd failed")?;
             let ek = EncodingKey::load(&config.auth.sk).context("load sk failed")?;
             let post = config.server.db_url.rfind('/').unwrap();

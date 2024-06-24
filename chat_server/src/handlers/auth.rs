@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     models::{CreateUser, SigninUser},
-    AppError, AppState, ErrorOutput, User,
+    AppError, AppState, ErrorOutput,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -15,7 +15,7 @@ pub(crate) async fn signup_handler(
     State(state): State<AppState>,
     Json(input): Json<CreateUser>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user = User::create(&input, &state.pool).await?;
+    let user = state.create_user(&input).await?;
     let token = state.ek.sign(user)?;
     /* let mut header = HeaderMap::new();
     header.insert("X-Token", HeaderValue::from_str(&token)?);
@@ -29,7 +29,7 @@ pub(crate) async fn signin_handler(
     State(state): State<AppState>,
     Json(input): Json<SigninUser>,
 ) -> Result<impl IntoResponse, AppError> {
-    let user = User::verify(&input, &state.pool).await?;
+    let user = state.verify_user(&input).await?;
     match user {
         Some(user) => {
             let token = state.ek.sign(user)?;
@@ -47,14 +47,11 @@ pub(crate) async fn signin_handler(
 mod tests {
     use http_body_util::BodyExt;
 
-    use crate::AppConfig;
-
     use super::*;
 
     #[tokio::test]
     async fn signup_duplicate_should_409() -> anyhow::Result<()> {
-        let config = AppConfig::load()?;
-        let (_tdb, state) = AppState::new_for_test(config).await?;
+        let (_tdb, state) = AppState::new_for_test().await?;
         let input = CreateUser::new("none", "zzq21", "zzq21@zzq.com", "zzq");
         signup_handler(State(state.clone()), Json(input.clone()))
             .await?
@@ -71,8 +68,7 @@ mod tests {
 
     #[tokio::test]
     async fn signup_should_work() -> anyhow::Result<()> {
-        let config = AppConfig::load()?;
-        let (_tdb, state) = AppState::new_for_test(config).await?;
+        let (_tdb, state) = AppState::new_for_test().await?;
         let input = CreateUser::new("none", "zzq21", "zzq21@zzq.com", "zzq");
         let ret = signup_handler(State(state), Json(input))
             .await?
@@ -88,10 +84,9 @@ mod tests {
 
     #[tokio::test]
     async fn signin_should_work() -> anyhow::Result<()> {
-        let config = AppConfig::load()?;
-        let (_tdb, state) = AppState::new_for_test(config).await?;
+        let (_tdb, state) = AppState::new_for_test().await?;
         let user = CreateUser::new("none", "zzq21", "zzq21@zzq.com", "zzq");
-        User::create(&user, &state.pool).await?;
+        state.create_user(&user).await?;
         let input = SigninUser::new("zzq21@zzq.com", "zzq");
 
         let ret = signin_handler(State(state), Json(input))
@@ -106,8 +101,7 @@ mod tests {
     }
     #[tokio::test]
     async fn signin_with_non_exist_user_should_403() -> anyhow::Result<()> {
-        let config = AppConfig::load()?;
-        let (_tdb, state) = AppState::new_for_test(config).await?;
+        let (_tdb, state) = AppState::new_for_test().await?;
 
         let input = SigninUser::new("zzq21@zzq.com", "zzq");
 
