@@ -15,18 +15,31 @@ pub struct ErrorOutput {
 pub enum AppError {
     #[error("email already exists: {0}")]
     EmailAlreadyExists(String),
+
     #[error("create chat error: {0}")]
     CreateChatError(String),
+
     #[error("Not found: {0}")]
     NotFound(String),
+
     #[error("io error: {0}")]
     IoError(#[from] std::io::Error),
+
+    #[error("message create error: {0}")]
+    MessageCreateError(String),
+
+    #[error("{0}")]
+    ChatFileError(String),
+
     #[error("sql error: {0}")]
     SqlxError(#[from] sqlx::Error),
+
     #[error("password hash error: {0}")]
     PasswordHashError(#[from] argon2::password_hash::Error),
+
     #[error("jwt error: {0}")]
     JwtError(#[from] jwt_simple::Error),
+
     #[error("http header parse error: {0}")]
     HttpHeaderError(#[from] axum::http::header::InvalidHeaderValue),
 }
@@ -50,6 +63,8 @@ impl IntoResponse for AppError {
             AppError::CreateChatError(_) => StatusCode::BAD_REQUEST,
             AppError::NotFound(_) => StatusCode::NOT_FOUND,
             AppError::IoError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::MessageCreateError(_) => StatusCode::BAD_REQUEST,
+            AppError::ChatFileError(_) => StatusCode::BAD_REQUEST,
         };
 
         (status, Json(json!(ErrorOutput::new(self.to_string())))).into_response()
