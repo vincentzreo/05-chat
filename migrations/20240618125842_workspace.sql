@@ -24,6 +24,8 @@ INSERT INTO users (id, fullname, email, password_hash)
 VALUES (0, 'super user', 'super@none.org', '');
 INSERT INTO workspaces (id, name, owner_id)
 VALUES (0, 'none', 0);
+INSERT INTO chats (id, ws_id, name, type, members)
+VALUES (0, 0, 'general', 'public_channel', '{0}');
 UPDATE users SET ws_id = 0 WHERE id = 0;
 COMMIT;
 
