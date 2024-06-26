@@ -39,12 +39,7 @@ impl AppState {
                 )));
             }
         }
-        if !self.is_chat_member(chat_id, user_id).await? {
-            return Err(AppError::MessageCreateError(format!(
-                "User {} is not a member of chat {}",
-                user_id, chat_id
-            )));
-        }
+
         let message: Message = sqlx::query_as(
             r#"
         INSERT INTO messages (chat_id, sender_id, content, files)
