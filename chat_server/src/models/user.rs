@@ -7,9 +7,9 @@ use argon2::{
 
 use serde::{Deserialize, Serialize};
 
-use crate::{AppError, AppState, User};
+use crate::{AppError, AppState};
 
-use super::ChatUser;
+use chat_core::{ChatUser, User};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CreateUser {
@@ -71,7 +71,8 @@ impl AppState {
         .fetch_one(&self.pool)
         .await?;
         if ws.owner_id == 0 {
-            ws.update_owner(user.id as _, &self.pool).await?;
+            self.update_workspace_owner(ws.id as _, user.id as _)
+                .await?;
         }
         Ok(user)
     }
@@ -123,8 +124,8 @@ impl AppState {
     }
 }
 
-#[allow(dead_code)]
-impl ChatUser {}
+// #[allow(dead_code)]
+// impl ChatUser {}
 
 fn hash_password(password: &str) -> Result<String, AppError> {
     let argon2 = Argon2::default();
@@ -154,19 +155,6 @@ impl CreateUser {
     }
 }
 
-#[cfg(test)]
-impl User {
-    pub fn new(id: i64, fullname: &str, email: &str) -> Self {
-        Self {
-            id,
-            ws_id: 0,
-            fullname: fullname.to_string(),
-            email: email.to_string(),
-            password_hash: None,
-            created_at: chrono::Utc::now(),
-        }
-    }
-}
 #[cfg(test)]
 impl SigninUser {
     pub fn new(email: &str, password: &str) -> Self {
