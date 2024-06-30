@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+jwt-simple = { workspace = true }
 anyhow = { workspace = true }
 axum = { workspace = true }
 axum-extra = { workspace = true }
@@ -15,7 +16,9 @@ serde_yaml = { workspace = true }
 sqlx = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-tokio-stream = "0.1.15"
+tokio-stream = { version = "0.1.15", features = ["sync"] }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 chat-core = { workspace = true }
+serde_json = { workspace = true }
+dashmap = "6.0.1"

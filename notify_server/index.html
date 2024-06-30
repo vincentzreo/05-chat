@@ -12,6 +12,18 @@
         eventSource.onmessage = function(event) {
             console.log("Got:", event.data);
         }
+        eventSource.addEventListener("NewChat", function(event) {
+            console.log("New Chat:", event.data);
+        });
+        eventSource.addEventListener("AddtoChat", function(event) {
+            console.log("Add to Chat:", event.data);
+        });
+        eventSource.addEventListener("RemoveFromChat", function(event) {
+            console.log("Remove from Chat:", event.data);
+        });
+        eventSource.addEventListener("NewMessage", function(event) {
+            console.log("New Message:", event.data);
+        });
     </script>
 </body>
 </html>
