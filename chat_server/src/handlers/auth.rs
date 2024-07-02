@@ -1,16 +1,28 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 use crate::{
     models::{CreateUser, SigninUser},
     AppError, AppState, ErrorOutput,
 };
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct AuthOutput {
     token: String,
 }
-
+#[utoipa::path(
+        post,
+        path = "/api/signup",
+        responses(
+            (status = 200, description = "User Created", body = AuthOutput)
+        )
+    )]
+/// Create a new user with email and password
+///
+/// - if the email is already in use, return 409
+/// - if the workspace does not exist, create one
+/// - if the workspace name is empty, return 400
 pub(crate) async fn signup_handler(
     State(state): State<AppState>,
     Json(input): Json<CreateUser>,
@@ -25,6 +37,13 @@ pub(crate) async fn signup_handler(
     Ok((StatusCode::CREATED, body))
 }
 
+#[utoipa::path(
+        post,
+        path = "/api/signin",
+        responses(
+            (status = 200, description = "User Signed in", body = AuthOutput)
+        )
+    )]
 pub(crate) async fn signin_handler(
     State(state): State<AppState>,
     Json(input): Json<SigninUser>,
