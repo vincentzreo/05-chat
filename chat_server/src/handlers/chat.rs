@@ -5,7 +5,7 @@ use axum::{
     Extension, Json,
 };
 
-use crate::{AppError, AppState, CreateChat};
+use crate::{AppError, AppState, CreateChat, UpdateChat};
 use chat_core::User;
 
 #[utoipa::path(
@@ -68,10 +68,25 @@ pub(crate) async fn get_chat_handler(
     }
 }
 
-pub(crate) async fn update_chat_handler() -> impl IntoResponse {
-    "update_chat"
+pub(crate) async fn update_chat_handler(
+    State(state): State<AppState>,
+    Path(id): Path<u64>,
+    Json(input): Json<UpdateChat>,
+) -> Result<impl IntoResponse, AppError> {
+    let chat = state.update_chat_by_id(input, id as _).await?;
+    match chat {
+        Some(chat) => Ok((StatusCode::OK, Json(chat))),
+        None => Err(AppError::NotFound(format!("chat with id {} not found", id))),
+    }
 }
 
-pub(crate) async fn delete_chat_handler() -> impl IntoResponse {
-    "delete_chat"
+pub(crate) async fn delete_chat_handler(
+    State(state): State<AppState>,
+    Path(id): Path<u64>,
+) -> Result<impl IntoResponse, AppError> {
+    let chat = state.delete_chat_by_id(id as _).await?;
+    match chat {
+        Some(chat) => Ok((StatusCode::OK, Json(chat))),
+        None => Err(AppError::NotFound(format!("chat with id {} not found", id))),
+    }
 }

@@ -48,6 +48,23 @@ Authorization: Bearer {{token}}
 }
 
 
+### update chat
+PATCH http://localhost:6688/api/chats/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "chat1222",
+    "members": [1,2, 3, 4],
+    "public": true
+}
+
+
+### delete chat
+DELETE http://localhost:6688/api/chats/1
+Authorization: Bearer {{token}}
+
+
 ### get chat list
 GET http://localhost:6688/api/chats
 Authorization: Bearer {{token}}
