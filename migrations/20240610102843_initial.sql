@@ -1,5 +1,4 @@
 -- Add migration script here
-
 -- create user table
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
@@ -20,25 +19,36 @@ CREATE TABLE workspaces (
 );
 
 BEGIN;
+
 -- add super user 0
-INSERT INTO users (id, ws_id, fullname, email, password_hash)
-VALUES (0, 0, 'super user', 'super@none.org', '');
-INSERT INTO workspaces (id, name, owner_id)
-VALUES (0, 'none', 0);
+INSERT INTO
+    users (id, ws_id, fullname, email, password_hash)
+VALUES
+    (0, 0, 'super user', 'super@none.org', '');
+
+INSERT INTO
+    workspaces (id, name, owner_id)
+VALUES
+    (0, 'none', 0);
+
 COMMIT;
 
 -- add foreign key constraint for ws_if for users
-ALTER TABLE users
-ADD CONSTRAINT fk_ws_id_fk
-FOREIGN KEY (ws_id)
-REFERENCES workspaces(id);
+ALTER TABLE
+    users
+ADD
+    CONSTRAINT fk_ws_id_fk FOREIGN KEY (ws_id) REFERENCES workspaces(id);
 
 -- create index for users for email
 CREATE UNIQUE INDEX IF NOT EXISTS email_index ON users(email);
 
 -- create chat type: single, group, private_channel, public_channel
-CREATE TYPE chat_type AS ENUM ('single', 'group', 'private_channel', 'public_channel');
-
+CREATE TYPE chat_type AS ENUM (
+    'single',
+    'group',
+    'private_channel',
+    'public_channel'
+);
 
 -- create chat table
 CREATE TABLE IF NOT EXISTS chats (
@@ -47,8 +57,9 @@ CREATE TABLE IF NOT EXISTS chats (
     name VARCHAR(64),
     type chat_type NOT NULL,
     -- user id list
-    members BIGINT[] NOT NULL,
-    created_at timestamptz DEFAULT CURRENT_TIMESTAMP
+    members BIGINT [] NOT NULL,
+    created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (ws_id, name)
 );
 
 -- create message table
@@ -57,7 +68,7 @@ CREATE TABLE IF NOT EXISTS messages (
     chat_id BIGINT NOT NULL REFERENCES chats(id),
     sender_id BIGINT NOT NULL REFERENCES users(id),
     content TEXT NOT NULL,
-    files TEXT[] DEFAULT '{}',
+    files TEXT [] DEFAULT '{}',
     created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -66,3 +77,6 @@ CREATE INDEX IF NOT EXISTS chat_id_created_at_index ON messages(chat_id, created
 
 -- create index for messages for sender_id
 CREATE INDEX IF NOT EXISTS sender_id_index ON messages(sender_id, created_at DESC);
+
+-- create index for chat members
+CREATE INDEX IF NOT EXISTS chat_members_index ON chats USING GIN (members);

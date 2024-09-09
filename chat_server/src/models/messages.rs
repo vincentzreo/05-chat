@@ -94,7 +94,7 @@ mod tests {
     async fn create_message_should_work() -> Result<()> {
         let (_tdb, state) = AppState::new_for_test().await?;
         let chat = state
-            .create_chat(CreateChat::new(None, &[1, 2], false), 1)
+            .create_chat(CreateChat::new(None, &[1, 2], false), 1, 1)
             .await?;
         let input = CreateMessage {
             content: "Hello".to_string(),
