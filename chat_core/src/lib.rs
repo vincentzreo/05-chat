@@ -59,6 +59,7 @@ pub struct Chat {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, Clone, PartialEq, ToSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct Message {
     pub id: i64,
     pub chat_id: i64,
