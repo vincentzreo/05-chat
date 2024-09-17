@@ -44,10 +44,12 @@ pub async fn setup_pg_listener(state: AppState) -> anyhow::Result<()> {
     tokio::spawn(async move {
         while let Some(Ok(notif)) = stream.next().await {
             info!("Received notification: {:?}", notif);
-            let notification = Notification::load(notif.channel(), notif.payload())?;
+            let notification = Notification::load(notif.channel(), notif.payload()).unwrap();
+            info!("Notification: {:?}", notification);
             let users = &state.users;
             for user_id in notification.user_ids {
                 if let Some(tx) = users.get(&user_id) {
+                    info!("Sending notification to user {}", user_id);
                     if let Err(e) = tx.send(notification.event.clone()) {
                         warn!("Failed to send notification to user {}: {}", user_id, e);
                     }

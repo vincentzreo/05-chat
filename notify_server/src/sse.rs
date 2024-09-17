@@ -40,6 +40,7 @@ pub(crate) async fn sse_handler(
             AppEvent::NewMessage(_) => "NewMessage",
         };
         let v = serde_json::to_string(&v).expect("Failed to serialize event");
+        info!("Sending event {}: {:?}", name, v);
         Ok(Event::default().data(v).event(name))
     });
 

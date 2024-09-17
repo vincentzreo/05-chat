@@ -52,7 +52,7 @@ impl NotifyServer {
                 .await
                 .unwrap();
         });
-        let mut es = EventSource::get(format!("http://{}/events?access_token={}", addr, token));
+        let mut es = EventSource::get(format!("http://{}/events?token={}", addr, token));
         tokio::spawn(async move {
             while let Some(event) = es.next().await {
                 match event {

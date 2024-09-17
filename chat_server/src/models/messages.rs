@@ -8,6 +8,7 @@ use chat_core::Message;
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct CreateMessage {
     pub content: String,
+    #[serde(default)]
     pub files: Vec<String>,
 }
 

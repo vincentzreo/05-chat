@@ -20,6 +20,7 @@ pub(crate) trait OpenApiRouter {
     paths(
         signin_handler,
         signup_handler,
+        send_message_handler,
         list_chat_handler,
         create_chat_handler,
         get_chat_handler,
