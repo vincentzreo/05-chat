@@ -38,6 +38,7 @@ pub(crate) async fn sse_handler(
             AppEvent::AddToChat(_) => "AddToChat",
             AppEvent::RemoveFromChat(_) => "RemoveFromChat",
             AppEvent::NewMessage(_) => "NewMessage",
+            AppEvent::ChatNameUpdated(_) => "ChatNameUpdated",
         };
         let v = serde_json::to_string(&v).expect("Failed to serialize event");
         info!("Sending event {}: {:?}", name, v);

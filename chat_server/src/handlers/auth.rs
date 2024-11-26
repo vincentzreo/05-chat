@@ -72,7 +72,7 @@ mod tests {
     async fn signup_duplicate_should_409() -> anyhow::Result<()> {
         let (_tdb, state) = AppState::new_for_test().await?;
         let input = CreateUser::new("none", "zzq21", "zzq21@zzq.com", "zzq");
-        signup_handler(State(state.clone()), Json(input.clone()))
+        let _ = signup_handler(State(state.clone()), Json(input.clone()))
             .await?
             .into_response();
         let ret = signup_handler(State(state.clone()), Json(input.clone()))

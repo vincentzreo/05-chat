@@ -69,7 +69,18 @@ pub(crate) async fn get_chat_handler(
         None => Err(AppError::NotFound(format!("chat with id {} not found", id))),
     }
 }
-
+#[utoipa::path(
+        patch,
+        path = "/api/chats/{id}",
+        params(("id"=u64, Path, description="Chat ID"), UpdateChat),
+        responses(
+            (status = 200, description = "Chat Updated", body = Chat),
+            (status = 404, description = "Chat not found", body = ErrorOutput)
+        ),
+        security(
+            ("token" = [])
+        )
+    )]
 pub(crate) async fn update_chat_handler(
     State(state): State<AppState>,
     Path(id): Path<u64>,
@@ -82,6 +93,18 @@ pub(crate) async fn update_chat_handler(
     }
 }
 
+#[utoipa::path(
+        delete,
+        path = "/api/chats/{id}",
+        params(("id"=u64, Path, description="Chat ID")),
+        responses(
+            (status = 200, description = "Chat Deleted", body = Chat),
+            (status = 404, description = "Chat not found", body = ErrorOutput)
+        ),
+        security(
+            ("token" = [])
+        )
+    )]
 pub(crate) async fn delete_chat_handler(
     State(state): State<AppState>,
     Path(id): Path<u64>,

@@ -15,6 +15,7 @@ pub enum AppEvent {
     AddToChat(Chat),
     RemoveFromChat(Chat),
     NewMessage(Message),
+    ChatNameUpdated(ChatNameUpdated),
 }
 
 #[derive(Debug)]
@@ -36,10 +37,19 @@ struct ChatMessageAdded {
     message: Message,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ChatNameUpdated {
+    chat_id: i64,
+    old_name: String,
+    new_name: String,
+    members: Vec<i64>,
+}
+
 pub async fn setup_pg_listener(state: AppState) -> anyhow::Result<()> {
     let mut listener = PgListener::connect(&state.config.server.db_url).await?;
     listener.listen("chat_updated").await?;
     listener.listen("chat_message_added").await?;
+    listener.listen("chat_name_updated").await?;
     let mut stream = listener.into_stream();
     tokio::spawn(async move {
         while let Some(Ok(notif)) = stream.next().await {
@@ -52,6 +62,7 @@ pub async fn setup_pg_listener(state: AppState) -> anyhow::Result<()> {
                     info!("Sending notification to user {}", user_id);
                     if let Err(e) = tx.send(notification.event.clone()) {
                         warn!("Failed to send notification to user {}: {}", user_id, e);
+                        users.remove(&user_id);
                     }
                 }
             }
@@ -64,6 +75,14 @@ pub async fn setup_pg_listener(state: AppState) -> anyhow::Result<()> {
 impl Notification {
     fn load(r#type: &str, payload: &str) -> anyhow::Result<Self> {
         match r#type {
+            "chat_name_updated" => {
+                let payload = serde_json::from_str::<ChatNameUpdated>(payload)?;
+                let user_ids = payload.members.iter().map(|v| *v as u64).collect();
+                Ok(Self {
+                    user_ids,
+                    event: Arc::new(AppEvent::ChatNameUpdated(payload)),
+                })
+            }
             "chat_updated" => {
                 let payload = serde_json::from_str::<ChatUpdated>(payload)?;
                 let user_ids =

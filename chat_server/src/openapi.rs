@@ -8,7 +8,9 @@ use utoipa_rapidoc::RapiDoc;
 use utoipa_redoc::{Redoc, Servable};
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::{handlers::*, CreateChat, CreateMessage, CreateUser, ListMessages, SigninUser};
+use crate::{
+    handlers::*, CreateChat, CreateMessage, CreateUser, ListMessages, SigninUser, UpdateChat,
+};
 use crate::{AppState, ErrorOutput};
 
 pub(crate) trait OpenApiRouter {
@@ -25,9 +27,13 @@ pub(crate) trait OpenApiRouter {
         create_chat_handler,
         get_chat_handler,
         list_message_handler,
+        update_chat_handler,
+        delete_chat_handler,
+        upload_handler,
+        file_handler,
     ),
     components(schemas(User, Chat, ChatType, ChatUser, Message, Workspace,
-        SigninUser, CreateUser, AuthOutput, ErrorOutput, CreateChat, CreateMessage, ListMessages)),
+        SigninUser, CreateUser, AuthOutput, ErrorOutput, CreateChat, CreateMessage, ListMessages, UpdateChat)),
     modifiers(&SecurityAddon),
     tags((name="chat", description="Chat operations")),
 )]

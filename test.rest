@@ -123,7 +123,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "name": "chat1222",
+    "name": "chat12222323",
     "members": [1,2, 3, 4],
     "public": true
 }

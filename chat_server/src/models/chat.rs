@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
+use utoipa::{IntoParams, ToSchema};
 
 use crate::{AppError, AppState};
 
@@ -12,7 +12,7 @@ pub struct CreateChat {
     pub public: bool,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Default, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, ToSchema, IntoParams)]
 pub struct UpdateChat {
     pub name: Option<String>,
     pub members: Option<Vec<i64>>,

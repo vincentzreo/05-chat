@@ -56,12 +56,12 @@ pub enum ChatType {
 #[serde(rename_all = "camelCase")]
 pub struct Chat {
     pub id: i64,
-    #[serde(alias = "wsId")]
+    #[serde(alias = "wsId", alias = "ws_id")]
     pub ws_id: i64,
     pub name: Option<String>,
     pub r#type: ChatType,
     pub members: Vec<i64>,
-    #[serde(alias = "createdAt")]
+    #[serde(alias = "createdAt", alias = "created_at")]
     pub created_at: DateTime<Utc>,
 }
 

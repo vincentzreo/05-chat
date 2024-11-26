@@ -59,6 +59,15 @@ pub(crate) async fn list_message_handler(
     Ok(Json(messages))
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/files/{ws_id}/*path",
+    params(("ws_id"=i64, Path, description="Workspace ID"), ("path"=String, Path, description="File path")),
+    responses(
+        (status = 200, description = "File", body = bytes),
+        (status = 404, description = "File not found", body = ErrorOutput)
+    )
+)]
 pub(crate) async fn file_handler(
     Extension(user): Extension<User>,
     State(state): State<AppState>,
@@ -82,6 +91,14 @@ pub(crate) async fn file_handler(
     Ok((headers, body))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/upload",
+    responses(
+        (status = 200, description = "List of uploaded files", body = Vec<String>),
+        (status = 400, description = "Invalid input", body = ErrorOutput)
+    )
+)]
 pub(crate) async fn upload_handler(
     Extension(user): Extension<User>,
     State(state): State<AppState>,
